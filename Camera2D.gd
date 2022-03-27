@@ -69,8 +69,8 @@ func _process(delta):
 	var mappedZoomDist = map(newZoom, 0.9, 1.5, 0, 1)
 	var easedZoom = map(easeInOutQuad(mappedZoomDist), 0, 1, 0.9, 1.5)
 	
-	zoom.x = easedZoom
-	zoom.y = easedZoom
+	zoom.x = easedZoom * 0.7 + newZoom * 0.3
+	zoom.y = easedZoom * 0.7 + newZoom * 0.3
 	
 	position = newPos
 	
