@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/penguin.png-11ed85b5bea72c755c01ca6a3f5b0d57.stex"
+path="res://.import/stickwarrior_jump_hit_1.png-e05eca6c71a56cb954c88b5bffe94d70.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://penguin.png"
-dest_files=[ "res://.import/penguin.png-11ed85b5bea72c755c01ca6a3f5b0d57.stex" ]
+source_file="res://images/Characters/StickWarrior/stickwarrior_jump_hit_1.png"
+dest_files=[ "res://.import/stickwarrior_jump_hit_1.png-e05eca6c71a56cb954c88b5bffe94d70.stex" ]
 
 [params]
 

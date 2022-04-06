@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/penguin_standing_slap.png-98f823c7b91dc188eee235e165e57d90.stex"
+path="res://.import/penguin_jump.png-8896de7ab4759c2110acf96b42c0add2.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://penguin_standing_slap.png"
-dest_files=[ "res://.import/penguin_standing_slap.png-98f823c7b91dc188eee235e165e57d90.stex" ]
+source_file="res://images/Characters/Penguin/penguin_jump.png"
+dest_files=[ "res://.import/penguin_jump.png-8896de7ab4759c2110acf96b42c0add2.stex" ]
 
 [params]
 

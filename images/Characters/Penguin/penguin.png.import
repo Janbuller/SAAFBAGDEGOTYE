@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/penguin_standing_kick.png-0edca4b7368e25f395dea2e67e5bf212.stex"
+path="res://.import/penguin.png-7938543925edcb0dcbcdf7b5e2d9f0ef.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://penguin_standing_kick.png"
-dest_files=[ "res://.import/penguin_standing_kick.png-0edca4b7368e25f395dea2e67e5bf212.stex" ]
+source_file="res://images/Characters/Penguin/penguin.png"
+dest_files=[ "res://.import/penguin.png-7938543925edcb0dcbcdf7b5e2d9f0ef.stex" ]
 
 [params]
 

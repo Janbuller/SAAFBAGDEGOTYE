@@ -1,0 +1,27 @@
+[gd_resource type="Shader" format=2]
+
+[resource]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.4.3.stable's CanvasItemMaterial.
+
+shader_type canvas_item;
+render_mode blend_mix;
+//render_mode skip_vertex_transform;
+
+uniform bool one_color = true;
+uniform float health = 0.5;
+uniform sampler2D background;
+
+void fragment(){
+	if(UV.x > health) {
+		COLOR = texture(background, vec2(health, UV.y));
+	} else {
+		if(one_color)
+			COLOR = texture(TEXTURE, vec2(health, UV.y));
+		else
+			COLOR = texture(TEXTURE, UV);
+	}
+}
+
+//void vertex() {
+//	VERTEX = (EXTRA_MATRIX * (WORLD_MATRIX * vec4(VERTEX, 0.0, 1.0))).xy;
+//}"

@@ -1,0 +1,53 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Shaders/healthbar_shader.tres" type="Shader" id=3]
+[ext_resource path="res://Scripts/PlayerController.gd" type="Script" id=5]
+[ext_resource path="res://images/Characters/StickWarrior/stickwarrior_standing_hit.png" type="Texture" id=8]
+[ext_resource path="res://images/Characters/StickWarrior/stickwarrior.png" type="Texture" id=10]
+[ext_resource path="res://images/Characters/StickWarrior/stickwarrior_standing_kick.png" type="Texture" id=11]
+[ext_resource path="res://images/Characters/StickWarrior/stickwarrior_jump.png" type="Texture" id=12]
+[ext_resource path="res://Scenes/MainGame/ParallaxBackground.tscn" type="PackedScene" id=13]
+[ext_resource path="res://images/Characters/StickWarrior/stickwarrior_jump_hit_1.png" type="Texture" id=14]
+[ext_resource path="res://images/Characters/StickWarrior/stickwarrior_jump_kick.png" type="Texture" id=18]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 14.1, 23.9 )
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Game" type="Node2D" parent="."]
+
+[node name="Player 2" type="Sprite" parent="Game"]
+position = Vector2( 500, 90 )
+scale = Vector2( 5, 5 )
+texture = ExtResource( 10 )
+flip_h = true
+script = ExtResource( 5 )
+playerIdx = 2
+tex_standing = ExtResource( 10 )
+tex_standing_punch = ExtResource( 8 )
+tex_standing_kick = ExtResource( 11 )
+tex_jump = ExtResource( 12 )
+tex_jump_punch = ExtResource( 14 )
+tex_jump_kick = ExtResource( 18 )
+health_bar = NodePath("../../CanvasLayer/TextureRect2")
+invincibility_cooldown = 0.25
+
+[node name="Hitbox" type="Area2D" parent="Game/Player 2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/Player 2/Hitbox"]
+position = Vector2( -0.0999985, 7.9 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 1 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+limit_left = -1000
+limit_top = -600
+limit_right = 1000
+limit_bottom = 360
+smoothing_enabled = true
+editor_draw_limits = true
+script = ExtResource( 3 )
+
+[node name="ParallaxBackground" parent="." instance=ExtResource( 13 )]
