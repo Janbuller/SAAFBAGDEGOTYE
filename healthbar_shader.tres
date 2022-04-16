@@ -11,11 +11,10 @@ uniform float health = 0.5;
 uniform sampler2D background;
 
 void fragment(){
-  float health2 = (sin(TIME + health) + 1.0 ) / 2.0;
-  if(UV.x > health2) {
-    COLOR = texture(background, vec2(health2, UV.y));
+  if(UV.x > health) {
+    COLOR = texture(background, vec2(health, UV.y));
   } else {
-    COLOR = texture(TEXTURE, vec2(health2, UV.y));
+    COLOR = texture(TEXTURE, vec2(health, UV.y));
   }
 }
 

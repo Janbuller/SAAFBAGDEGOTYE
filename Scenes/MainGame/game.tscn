@@ -1,26 +1,102 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=25 format=2]
 
-[ext_resource path="res://Shaders/healthbar_shader.tres" type="Shader" id=3]
+[ext_resource path="res://images/Characters/Penguin/penguin.png" type="Texture" id=1]
+[ext_resource path="res://images/Characters/Penguin/penguin_standing_slap.png" type="Texture" id=2]
+[ext_resource path="res://Scripts/CameraController.gd" type="Script" id=3]
+[ext_resource path="res://images/Characters/Penguin/penguin_standing_kick.png" type="Texture" id=4]
 [ext_resource path="res://Scripts/PlayerController.gd" type="Script" id=5]
+[ext_resource path="res://images/Characters/Penguin/penguin_jump_slap.png" type="Texture" id=6]
+[ext_resource path="res://images/Characters/Penguin/penguin_jump_kick.png" type="Texture" id=7]
 [ext_resource path="res://images/Characters/StickWarrior/stickwarrior_standing_hit.png" type="Texture" id=8]
+[ext_resource path="res://images/Characters/Penguin/penguin_jump.png" type="Texture" id=9]
 [ext_resource path="res://images/Characters/StickWarrior/stickwarrior.png" type="Texture" id=10]
 [ext_resource path="res://images/Characters/StickWarrior/stickwarrior_standing_kick.png" type="Texture" id=11]
 [ext_resource path="res://images/Characters/StickWarrior/stickwarrior_jump.png" type="Texture" id=12]
 [ext_resource path="res://Scenes/MainGame/ParallaxBackground.tscn" type="PackedScene" id=13]
 [ext_resource path="res://images/Characters/StickWarrior/stickwarrior_jump_hit_1.png" type="Texture" id=14]
+[ext_resource path="res://images/HealthBar/healthbar2.png" type="Texture" id=15]
+[ext_resource path="res://images/HealthBar/healthbar_bg.png" type="Texture" id=16]
+[ext_resource path="res://healthbar_shader.tres" type="Shader" id=17]
 [ext_resource path="res://images/Characters/StickWarrior/stickwarrior_jump_kick.png" type="Texture" id=18]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 14.1, 23.9 )
 
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 13, 1.5 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 6.5, 5.5 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 5.9, 5.5 )
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 6, 7.5 )
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = ExtResource( 17 )
+shader_param/health = 0.5
+shader_param/background = ExtResource( 16 )
+
 [node name="Node2D" type="Node2D"]
 
 [node name="Game" type="Node2D" parent="."]
 
+[node name="Player 1" type="Sprite" parent="Game"]
+position = Vector2( -500, 90 )
+scale = Vector2( 5, 5 )
+texture = ExtResource( 18 )
+script = ExtResource( 5 )
+tex_standing = ExtResource( 1 )
+tex_standing_punch = ExtResource( 2 )
+tex_standing_kick = ExtResource( 4 )
+tex_jump = ExtResource( 9 )
+tex_jump_punch = ExtResource( 6 )
+tex_jump_kick = ExtResource( 7 )
+health_bar = NodePath("../../CanvasLayer/TextureRect")
+invincibility_cooldown = 0.25
+
+[node name="Hitbox" type="Area2D" parent="Game/Player 1"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 1/Hitbox"]
+position = Vector2( -0.0999985, 7.9 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 1 )
+
+[node name="Stand_Punch" type="Area2D" parent="Game/Player 1"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 1/Stand_Punch"]
+position = Vector2( -19, 8.5 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 2 )
+
+[node name="Stand_Kick" type="Area2D" parent="Game/Player 1"]
+scale = Vector2( 1, 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/Player 1/Stand_Kick"]
+position = Vector2( -12.5, 19.5 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 3 )
+
+[node name="Jump_Punch" type="Area2D" parent="Game/Player 1"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 1/Jump_Punch"]
+position = Vector2( -20.1, 13.5 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 4 )
+
+[node name="Jump_Kick" type="Area2D" parent="Game/Player 1"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 1/Jump_Kick"]
+position = Vector2( -10, 22.5 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 5 )
+
 [node name="Player 2" type="Sprite" parent="Game"]
 position = Vector2( 500, 90 )
 scale = Vector2( 5, 5 )
-texture = ExtResource( 10 )
+texture = ExtResource( 18 )
 flip_h = true
 script = ExtResource( 5 )
 playerIdx = 2
@@ -35,10 +111,39 @@ invincibility_cooldown = 0.25
 
 [node name="Hitbox" type="Area2D" parent="Game/Player 2"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/Player 2/Hitbox"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 2/Hitbox"]
 position = Vector2( -0.0999985, 7.9 )
 scale = Vector2( 1, 1 )
 shape = SubResource( 1 )
+
+[node name="Stand_Punch" type="Area2D" parent="Game/Player 2"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 2/Stand_Punch"]
+position = Vector2( -19, 8.5 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 2 )
+
+[node name="Stand_Kick" type="Area2D" parent="Game/Player 2"]
+scale = Vector2( 1, 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/Player 2/Stand_Kick"]
+position = Vector2( -12.5, 19.5 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 3 )
+
+[node name="Jump_Punch" type="Area2D" parent="Game/Player 2"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 2/Jump_Punch"]
+position = Vector2( -20.1, 13.5 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 4 )
+
+[node name="Jump_Kick" type="Area2D" parent="Game/Player 2"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 2/Jump_Kick"]
+position = Vector2( -10, 22.5 )
+scale = Vector2( 1, 1 )
+shape = SubResource( 5 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
@@ -49,5 +154,29 @@ limit_bottom = 360
 smoothing_enabled = true
 editor_draw_limits = true
 script = ExtResource( 3 )
+player_1_path = NodePath("../Game/Player 1")
+player_2_path = NodePath("../Game/Player 2")
 
 [node name="ParallaxBackground" parent="." instance=ExtResource( 13 )]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+material = SubResource( 6 )
+anchor_left = 0.04
+anchor_top = 0.025
+anchor_right = 0.46
+anchor_bottom = 0.025
+margin_bottom = 40.0
+texture = ExtResource( 15 )
+stretch_mode = 1
+
+[node name="TextureRect2" type="TextureRect" parent="CanvasLayer"]
+material = SubResource( 6 )
+anchor_left = 0.54
+anchor_top = 0.025
+anchor_right = 0.96
+anchor_bottom = 0.025
+margin_bottom = 40.0
+texture = ExtResource( 15 )
+stretch_mode = 1
