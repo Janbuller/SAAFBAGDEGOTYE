@@ -13,6 +13,9 @@ export var tex_standing_kick : Texture
 export var tex_jump : Texture
 export var tex_jump_punch : Texture
 export var tex_jump_kick : Texture
+export var tex_crouch : Texture
+export var tex_crouch_punch : Texture
+export var tex_crouch_kick : Texture
 
 var health = 1.0;
 export var health_bar : NodePath;
@@ -26,6 +29,9 @@ var col_standing_punch
 var col_standing_kick
 var col_jump_punch
 var col_jump_kick
+var col_crouch_hitbox
+var col_crouch_punch
+var col_crouch_kick
 
 var inp_cont_num
 var inp_horz_ax
@@ -52,6 +58,8 @@ var xVel = 0;
 var yVel = 0;
 var inAir = false;
 
+var crouching = false;
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	health_bar_mat = get_node(health_bar).material;
@@ -61,6 +69,9 @@ func _ready():
 	col_standing_kick  = get_node(@"Stand_Kick")
 	col_jump_punch     = get_node(@"Jump_Punch")
 	col_jump_kick      = get_node(@"Jump_Kick")
+	col_crouch_hitbox  = get_node(@"Crouch_Hitbox")
+	col_crouch_punch   = get_node(@"Crouch_Punch")
+	col_crouch_kick    = get_node(@"Crouch_Kick")
 
 	# col_standing_punch.set_deferred("monitorable", false);
 	# col_standing_kick.set_deferred("monitorable", false);
@@ -149,7 +160,7 @@ var k_kick_1 = false;
 var k_punch_2 = false;
 var k_kick_2 = false;
 var k_jump = false;
-var k_fall = false;
+var k_crouch = false;
 
 func processInput(delta):
 	x = Input.get_joy_axis(inp_cont_num, inp_horz_ax)
@@ -171,18 +182,25 @@ func processInput(delta):
 	k_punch_2 = Input.is_joy_button_pressed(inp_cont_num, inp_punch2_btn) or Input.is_key_pressed(inp_punch2_key)
 	k_kick_2  = Input.is_joy_button_pressed(inp_cont_num, inp_kick2_btn)  or Input.is_key_pressed(inp_kick2_key)
 	k_jump    = Input.is_joy_button_pressed(inp_cont_num, inp_up_btn)     or Input.is_key_pressed(inp_up_key)
-	k_fall    = Input.get_joy_axis(inp_cont_num, inp_vert_ax) > 0.8       or Input.is_key_pressed(inp_down_key)
+	k_crouch  = Input.get_joy_axis(inp_cont_num, inp_vert_ax) > 0.8       or Input.is_key_pressed(inp_down_key)
 
 func doCollision():
-	var hitbox = col_hitbox
+	var hitbox
+	if(!crouching):
+		hitbox = col_hitbox
+	else:
+		hitbox = col_crouch_hitbox
 	var colliders = hitbox.get_overlapping_areas();
 	for col in colliders:
-		if(col.name == "Hitbox"):
+		if (col.name == "Hitbox" ||
+			col.name == "Crouch_Hitbox"):
 			continue;
 		if (col == col_standing_punch ||
 			col == col_standing_kick  ||
 			col == col_jump_punch     ||
-			col == col_jump_kick):
+			col == col_jump_kick      ||
+			col == col_crouch_punch   ||
+			col == col_crouch_kick):
 			continue;
 
 		var colAtk;
@@ -200,6 +218,12 @@ func doCollision():
 		if(col.name == "Jump_Kick"):
 			colAtk = attack_type.KICK;
 			colMov = movement_type.AIR;
+		if(col.name == "Crouch_Punch"):
+			colAtk = attack_type.PUNCH;
+			colMov = movement_type.CROUCH;
+		if(col.name == "Crouch_Kick"):
+			colAtk = attack_type.KICK;
+			colMov = movement_type.CROUCH;
 
 		if(!col.get_parent().isAttacking(colAtk, colMov)):
 			continue;
@@ -210,15 +234,20 @@ func doCollision():
 		invincibility_cooldown_timer = invincibility_cooldown;
 
 		var dirFromAttack = col.get_parent().position.direction_to(position);
-
-		yVel = -200 + (-50 * dirFromAttack.y);
+		
+		yVel = -200 + (-50 * abs(dirFromAttack.y));
 		xVel = dirFromAttack.x * 500;
 
 
-enum movement_type {GROUND, AIR}
+enum movement_type {GROUND, AIR, CROUCH}
 
 func isAttacking(atk : int, mov : int):
-	if(mov == movement_type.GROUND && !inAir):
+	if(mov == movement_type.CROUCH && !inAir && crouching):
+		if(atk == attack_type.PUNCH && punching):
+			return true;
+		elif(atk == attack_type.KICK && kicking):
+			return true;
+	elif(mov == movement_type.GROUND && !inAir && !crouching):
 		if(atk == attack_type.PUNCH && punching):
 			return true;
 		elif(atk == attack_type.KICK && kicking):
@@ -242,11 +271,14 @@ func _process(delta):
 
 	health_bar_mat.set_shader_param("health", health);
 	
+	# Using the flip parameters doesn't flip the hitboxes
 	if(!inAir):
 		if(x < -0.01):
-			flip_h = true;
+			# flip_h = true;
+			scale.x = -5
 		elif (x > 0.01):
-			flip_h = false;
+			# flip_h = false;
+			scale.x = 5
 	
 	if(inAir):
 		x *= 0.01;
@@ -254,10 +286,13 @@ func _process(delta):
 	else:
 		xVel *= 0.7;
 	
-	xVel += x;
+	if(not crouching):
+		xVel += x;
+	
 	xVel = min(max(-1, xVel), 1)
 	
 	position.x += xVel * delta * 360
+
 	position.x = min(max(-580, position.x), 580)
 	
 	attackUpdate(delta)
@@ -271,7 +306,14 @@ func _process(delta):
 	if(k_kick_2):
 		attack(attack_type.KICK, attack_str.LARGE)
 	
-	if(!inAir):
+	if(crouching):
+		if(punching):
+			set_texture(tex_crouch_punch);
+		elif(kicking):
+			set_texture(tex_crouch_kick);
+		else:
+			set_texture(tex_crouch);
+	elif(!inAir):
 		if(punching):
 			set_texture(tex_standing_punch)
 		elif(kicking):
@@ -285,6 +327,7 @@ func _process(delta):
 			set_texture(tex_jump_kick);
 		else:
 			set_texture(tex_jump);
+		
 	
 	if(position.y >= 80):
 		inAir = false;
@@ -292,16 +335,18 @@ func _process(delta):
 		inAir = true;
 		
 	if(k_jump):
-		if(!inAir):
+		if(!inAir and not crouching):
 			yVel = -500;
 			xVel *= 1.1;
 		yVel += 500 * delta;
 	else:
 		yVel += 900 * delta;
 	
-	if(k_fall):
-		yVel = max(yVel, 200)
-		yVel += 800 * delta
+	if(k_crouch and not inAir):
+		crouching = true;
+	else:
+		crouching = false;
+		
 	position.y += yVel * delta;
 	
 	if(position.y > 90):
