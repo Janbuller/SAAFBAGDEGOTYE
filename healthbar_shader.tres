@@ -5,7 +5,6 @@ code = "// NOTE: Shader automatically converted from Godot Engine 3.4.3.stable's
 
 shader_type canvas_item;
 render_mode blend_mix;
-//render_mode skip_vertex_transform;
 
 uniform float health = 0.5;
 uniform sampler2D background;
@@ -18,6 +17,4 @@ void fragment(){
   }
 }
 
-//void vertex() {
-//	VERTEX = (EXTRA_MATRIX * (WORLD_MATRIX * vec4(VERTEX, 0.0, 1.0))).xy;
-//}"
+"

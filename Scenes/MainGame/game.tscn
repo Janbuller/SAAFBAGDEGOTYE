@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=52 format=2]
 
 [ext_resource path="res://images/Characters/Penguin/penguin.png" type="Texture" id=1]
 [ext_resource path="res://images/Characters/Penguin/penguin_standing_slap.png" type="Texture" id=2]
@@ -23,6 +23,15 @@
 [ext_resource path="res://images/Characters/StickWarrior/stickwarrior_crouch_hit.png" type="Texture" id=21]
 [ext_resource path="res://images/Characters/Penguin/penguin_crouch_kick.png" type="Texture" id=22]
 [ext_resource path="res://images/Characters/Penguin/penguin_crouch_slap.png" type="Texture" id=23]
+[ext_resource path="res://images/Characters/Penguin/penguin_walk_1.png" type="Texture" id=24]
+[ext_resource path="res://images/Characters/Penguin/penguin_walk_2.png" type="Texture" id=25]
+[ext_resource path="res://images/Characters/StickWarrior/stickwarrior_walk_1.png" type="Texture" id=26]
+[ext_resource path="res://images/Characters/StickWarrior/stickwarrior_walk_2.png" type="Texture" id=27]
+[ext_resource path="res://Scripts/GameManager.gd" type="Script" id=28]
+[ext_resource path="res://Sound/Select.wav" type="AudioStream" id=29]
+[ext_resource path="res://Sound/Jump.wav" type="AudioStream" id=30]
+[ext_resource path="res://Sound/Slap.wav" type="AudioStream" id=31]
+[ext_resource path="res://Sound/StickHit.wav" type="AudioStream" id=32]
 
 [sub_resource type="RectangleShape2D" id=10]
 extents = Vector2( 9, 15.4 )
@@ -104,7 +113,11 @@ shader = SubResource( 7 )
 shader_param/health = 0.5
 shader_param/background = ExtResource( 16 )
 
-[node name="Node2D" type="Node2D"]
+[node name="GameScene" type="Node2D"]
+script = ExtResource( 28 )
+player_1 = NodePath("Game/Player 1")
+player_2 = NodePath("Game/Player 2")
+canvas_layer = NodePath("CanvasLayer")
 
 [node name="Game" type="Node2D" parent="."]
 
@@ -122,6 +135,8 @@ tex_jump_kick = ExtResource( 7 )
 tex_crouch = ExtResource( 17 )
 tex_crouch_punch = ExtResource( 23 )
 tex_crouch_kick = ExtResource( 22 )
+tex_walk_1 = ExtResource( 24 )
+tex_walk_2 = ExtResource( 25 )
 health_bar = NodePath("../../CanvasLayer/TextureRect")
 invincibility_cooldown = 0.25
 
@@ -159,26 +174,31 @@ shape = SubResource( 14 )
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 1/Crouch_Hitbox"]
 position = Vector2( -2, 21.4 )
-scale = Vector2( 1, 1 )
 shape = SubResource( 15 )
 
 [node name="Crouch_Punch" type="Area2D" parent="Game/Player 1"]
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 1/Crouch_Punch"]
 position = Vector2( 9, 24 )
-scale = Vector2( 1, 1 )
 shape = SubResource( 19 )
 
 [node name="Crouch_Kick" type="Area2D" parent="Game/Player 1"]
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 1/Crouch_Kick"]
 position = Vector2( 8.5, 27.5 )
-scale = Vector2( 1, 1 )
 shape = SubResource( 18 )
+
+[node name="JumpStream" type="AudioStreamPlayer2D" parent="Game/Player 1"]
+stream = ExtResource( 30 )
+bus = "Game"
+
+[node name="HitStream" type="AudioStreamPlayer2D" parent="Game/Player 1"]
+stream = ExtResource( 32 )
+bus = "Game"
 
 [node name="Player 2" type="Sprite" parent="Game"]
 position = Vector2( 500, 90 )
-scale = Vector2( -5, 5 )
+scale = Vector2( -5.13543, 5.86268 )
 texture = ExtResource( 10 )
 script = ExtResource( 5 )
 playerIdx = 2
@@ -191,6 +211,8 @@ tex_jump_kick = ExtResource( 18 )
 tex_crouch = ExtResource( 19 )
 tex_crouch_punch = ExtResource( 21 )
 tex_crouch_kick = ExtResource( 20 )
+tex_walk_1 = ExtResource( 26 )
+tex_walk_2 = ExtResource( 27 )
 health_bar = NodePath("../../CanvasLayer/TextureRect2")
 invincibility_cooldown = 0.25
 
@@ -234,7 +256,6 @@ scale = Vector2( -1, 1 )
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 2/Crouch_Hitbox"]
 position = Vector2( -2.9, 9.9 )
-scale = Vector2( 1, 1 )
 shape = SubResource( 16 )
 
 [node name="Crouch_Punch" type="Area2D" parent="Game/Player 2"]
@@ -242,7 +263,6 @@ scale = Vector2( -1, 1 )
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 2/Crouch_Punch"]
 position = Vector2( -21.5, 14 )
-scale = Vector2( 1, 1 )
 shape = SubResource( 20 )
 
 [node name="Crouch_Kick" type="Area2D" parent="Game/Player 2"]
@@ -250,8 +270,15 @@ scale = Vector2( -1, 1 )
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Game/Player 2/Crouch_Kick"]
 position = Vector2( -13, 22.5 )
-scale = Vector2( 1, 1 )
 shape = SubResource( 21 )
+
+[node name="JumpStream" type="AudioStreamPlayer2D" parent="Game/Player 2"]
+stream = ExtResource( 30 )
+bus = "Game"
+
+[node name="HitStream" type="AudioStreamPlayer2D" parent="Game/Player 2"]
+stream = ExtResource( 31 )
+bus = "Game"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
@@ -289,3 +316,8 @@ margin_bottom = 40.0
 texture = ExtResource( 15 )
 stretch_mode = 1
 flip_h = true
+
+[node name="SelectSoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 29 )
+autoplay = true
+bus = "Menu"

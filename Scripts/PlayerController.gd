@@ -7,15 +7,17 @@ export var playerIdx = 1
 
 export var JumpMultiplier = 1;
 
-export var tex_standing : Texture
+export var tex_standing       : Texture
 export var tex_standing_punch : Texture
-export var tex_standing_kick : Texture
-export var tex_jump : Texture
-export var tex_jump_punch : Texture
-export var tex_jump_kick : Texture
-export var tex_crouch : Texture
-export var tex_crouch_punch : Texture
-export var tex_crouch_kick : Texture
+export var tex_standing_kick  : Texture
+export var tex_jump           : Texture
+export var tex_jump_punch     : Texture
+export var tex_jump_kick      : Texture
+export var tex_crouch         : Texture
+export var tex_crouch_punch   : Texture
+export var tex_crouch_kick    : Texture
+export var tex_walk_1         : Texture
+export var tex_walk_2         : Texture
 
 var health = 1.0;
 export var health_bar : NodePath;
@@ -60,6 +62,9 @@ var inAir = false;
 
 var crouching = false;
 
+var jump_audio_stream;
+var hit_audio_stream;
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	health_bar_mat = get_node(health_bar).material;
@@ -72,6 +77,9 @@ func _ready():
 	col_crouch_hitbox  = get_node(@"Crouch_Hitbox")
 	col_crouch_punch   = get_node(@"Crouch_Punch")
 	col_crouch_kick    = get_node(@"Crouch_Kick")
+	
+	jump_audio_stream = get_node(@"JumpStream")
+	hit_audio_stream  = get_node(@"HitStream")
 
 	# col_standing_punch.set_deferred("monitorable", false);
 	# col_standing_kick.set_deferred("monitorable", false);
@@ -237,6 +245,7 @@ func doCollision():
 		
 		yVel = -200 + (-50 * abs(dirFromAttack.y));
 		xVel = dirFromAttack.x * 500;
+		hit_audio_stream.playing = true;
 
 
 enum movement_type {GROUND, AIR, CROUCH}
@@ -261,8 +270,21 @@ func isAttacking(atk : int, mov : int):
 
 func getAttackStrength():
 	return cur_attack_strength;
+
+var WalkAnimCountdown = 0;
+var FirstWalkFrame = true;
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	if(get_parent().get_parent().GameEnded):
+		return
+	
+	WalkAnimCountdown = max(0, WalkAnimCountdown-delta);
+	if(WalkAnimCountdown == 0 and abs(xVel) > 0.1):
+		FirstWalkFrame = !FirstWalkFrame;
+		WalkAnimCountdown = 0.1/abs(xVel)
+	
+	if(health > 0):
+		pass
 	processInput(delta)
 
 	invincibility_cooldown_timer -= delta;
@@ -319,7 +341,13 @@ func _process(delta):
 		elif(kicking):
 			set_texture(tex_standing_kick)
 		else:
-			set_texture(tex_standing)
+			if(abs(xVel) > 0.1):
+				if(FirstWalkFrame):
+					set_texture(tex_walk_1)
+				else:
+					set_texture(tex_walk_2)
+			else:
+				set_texture(tex_standing)
 	elif(inAir):
 		if(punching):
 			set_texture(tex_jump_punch);
@@ -338,6 +366,8 @@ func _process(delta):
 		if(!inAir and not crouching):
 			yVel = -500;
 			xVel *= 1.1;
+			jump_audio_stream.playing = true;
+			
 		yVel += 500 * delta;
 	else:
 		yVel += 900 * delta;
