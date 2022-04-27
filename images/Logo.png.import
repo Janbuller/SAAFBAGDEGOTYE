@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Street_Fighter_Logo.png-75f29e580758137e0116c90041493cda.stex"
+path="res://.import/Logo.png-412284a3bf4380fb5e3383db1c7c57e7.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/Street_Fighter_Logo.png"
-dest_files=[ "res://.import/Street_Fighter_Logo.png-75f29e580758137e0116c90041493cda.stex" ]
+source_file="res://images/Logo.png"
+dest_files=[ "res://.import/Logo.png-412284a3bf4380fb5e3383db1c7c57e7.stex" ]
 
 [params]
 
@@ -32,4 +32,4 @@ process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=true
-svg/scale=1.0
+svg/scale=0.5

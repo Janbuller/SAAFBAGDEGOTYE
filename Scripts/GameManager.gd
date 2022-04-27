@@ -31,6 +31,13 @@ func _ready():
 func _process(delta):
 	if(player_1_node.health <= 0 or player_2_node.health <= 0 and not GameEnded):
 		var WinScreenInstance = WinScreen.instance();
+		var Winner;
+		if(player_1_node.health <= 0):
+			Winner = player_2_node
+		else:
+			Winner = player_1_node
+			
+		WinScreenInstance.get_node("MarginContainer/MarginContainer/VBoxContainer/Label").text = "PLAYER " + str(Winner.playerIdx) + " WINS"
 		canvas_layer_node.add_child(WinScreenInstance);
 		GameEnded = true;
 		pass

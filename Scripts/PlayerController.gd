@@ -58,6 +58,7 @@ var inp_kick2_btn
 
 var xVel = 0;
 var yVel = 0;
+
 var inAir = false;
 
 var crouching = false;
@@ -314,8 +315,13 @@ func _process(delta):
 	xVel = min(max(-1, xVel), 1)
 	
 	position.x += xVel * delta * 360
+	position.y += yVel * delta;
 
 	position.x = min(max(-580, position.x), 580)
+	
+	if(position.y > 90):
+		position.y = 90;
+		yVel = 0;
 	
 	attackUpdate(delta)
 	
@@ -376,10 +382,4 @@ func _process(delta):
 		crouching = true;
 	else:
 		crouching = false;
-		
-	position.y += yVel * delta;
-	
-	if(position.y > 90):
-		position.y = 90;
-		yVel = 0;
 	pass
